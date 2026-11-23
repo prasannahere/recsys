@@ -1,0 +1,39 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: recsys-hybrid-training
+  labels:
+    cloud.googleapis.com/location: asia-southeast1
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/gpu-zonal-redundancy-disabled: "true"
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          maxRetries: 0
+          timeoutSeconds: 3600
+          containers:
+            - image: asia-south1-docker.pkg.dev/rec-sys-507218/recsys/recsys-hybrid-training:v1
+              args:
+                - --skip-eval
+              env:
+                - name: TRANSACTIONS_PATH
+                  value: gs://rec-sys-507218-data/data/raw/transactions_train.csv
+                - name: ARTICLES_PATH
+                  value: gs://rec-sys-507218-data/data/raw/articles.csv
+                - name: OUTPUT_URI
+                  value: gs://rec-sys-507218-data/artifacts/hybrid_job_output
+                - name: CONFIG_PATH
+                  value: /app/configs/hybrid.yaml
+                - name: SKIP_EVAL
+                  value: "1"
+              resources:
+                limits:
+                  cpu: "8"
+                  memory: 32Gi
+                  nvidia.com/gpu: "1"
+          nodeSelector:
+            run.googleapis.com/accelerator: nvidia-l4

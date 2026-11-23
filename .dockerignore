@@ -1,0 +1,10 @@
+# Docker build context (training image)
+data/
+artifacts/
+notebooks/
+.git/
+__pycache__/
+**/*.pyc
+.DS_Store
+.cursor/
+**/.ipynb_checkpoints

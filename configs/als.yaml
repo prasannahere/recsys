@@ -1,0 +1,46 @@
+data:
+  transactions_path: data/raw/transactions_train.csv
+
+split:
+  validation_days: 7
+
+interaction_weighting:
+  method: recency
+  lambda: 0.01
+
+als:
+  factors: 128
+  regularization: 0.05
+  iterations: 20
+  alpha: 20
+  random_state: 42
+
+retrieval:
+  candidate_k: 200
+  filter_seen: true
+
+evaluation:
+  ks: [12]
+  progress_log_interval_sec: 60
+  user_chunk_size: 5000
+  max_eval_users: 0  # 0 = all validation-window purchasers; set e.g. 10000 for dev
+
+artifacts:
+  model_dir: artifacts/als
+  mappings_dir: data/mappings
+
+popularity:
+  rank_by: purchase_count  # purchase_count | unique_users
+
+ranking:
+  max_train_users: 50000
+  negatives_per_positive: 5
+  random_state: 42
+  model_path: artifacts/als/ranker/ranker.pkl
+  lgbm:
+    n_estimators: 100
+    learning_rate: 0.05
+    num_leaves: 31
+    min_data_in_leaf: 20
+    subsample: 0.8
+    colsample_bytree: 0.8

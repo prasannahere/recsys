@@ -1,0 +1,19 @@
+# Submit: gcloud ai custom-jobs create --region=asia-south1 --display-name=recsys-als-training --config=training/als/custom_job.yaml
+workerPoolSpecs:
+  - machineSpec:
+      machineType: n1-highmem-32
+    replicaCount: 1
+    diskSpec:
+      bootDiskType: pd-ssd
+      bootDiskSizeGb: 200
+    containerSpec:
+      imageUri: asia-south1-docker.pkg.dev/rec-sys-507218/recsys/recsys-als-training:v5
+      env:
+        - name: TRANSACTIONS_PATH
+          value: gs://rec-sys-507218-data/data/raw/transactions_train.csv
+        - name: OUTPUT_URI
+          value: gs://rec-sys-507218-data/artifacts/als_job_output
+        - name: CONFIG_PATH
+          value: /app/configs/als.yaml
+baseOutputDirectory:
+  outputUriPrefix: gs://rec-sys-507218-data/artifacts/als_job_output

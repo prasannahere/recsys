@@ -1,0 +1,20 @@
+# Submit: gcloud ai custom-jobs create --region=asia-south1 --display-name=recsys-two-tower-training-highmem --config=training/two_tower/custom_job.yaml
+# CPU high-mem (208 GB RAM). For L4 GPU use Cloud Run: ./training/scripts/submit_cloudrun_job.sh two_tower
+workerPoolSpecs:
+  - machineSpec:
+      machineType: n1-highmem-32
+    replicaCount: 1
+    diskSpec:
+      bootDiskType: pd-ssd
+      bootDiskSizeGb: 200
+    containerSpec:
+      imageUri: asia-south1-docker.pkg.dev/rec-sys-507218/recsys/recsys-two-tower-training:v5
+      env:
+        - name: TRANSACTIONS_PATH
+          value: gs://rec-sys-507218-data/data/raw/transactions_train.csv
+        - name: OUTPUT_URI
+          value: gs://rec-sys-507218-data/artifacts/two_tower_job_output
+        - name: CONFIG_PATH
+          value: /app/configs/two_tower.yaml
+baseOutputDirectory:
+  outputUriPrefix: gs://rec-sys-507218-data/artifacts/two_tower_job_output
